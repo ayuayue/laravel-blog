@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostRequest;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use App\Post;
 use Illuminate\Support\Facades\Auth;
 
@@ -40,7 +40,7 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
         $datas = $request->all();
         $datas['author_id'] = Auth::id();
@@ -56,7 +56,6 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        // $post = Post::findOrFail($id);
         return view('posts.show',compact('post'));
     }
 
@@ -66,9 +65,9 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Post $post)
     {
-        //
+        return view('posts.edit', compact('post'));
     }
 
     /**
@@ -78,9 +77,10 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(PostRequest $request, Post $post)
     {
-        //
+        $post->update($request->all());
+        return redirect(url('posts',$post->id));
     }
 
     /**
@@ -89,8 +89,9 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        //
+        $post->delete();
+        return redirect('posts');
     }
 }
